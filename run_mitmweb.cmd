@@ -8,5 +8,6 @@ echo Web interface: http://127.0.0.1:8081
 echo Proxy listening on: 127.0.0.1:8080
 echo.
 
-"%APPDATA%\Python\Python312\Scripts\mitmweb.exe" -s awesome_cache.py --set stream_large_bodies=0 --listen-host 127.0.0.1 --listen-port 8080
+@REM "%APPDATA%\Python\Python312\Scripts\mitmweb.exe" -s awesome_cache.py --set stream_large_bodies=0 --listen-host 127.0.0.1 --listen-port 8080
+"%APPDATA%\Python\Python312\Scripts\mitmweb.exe" -s awesome_cache.py --listen-host 127.0.0.1 --listen-port 8080
 

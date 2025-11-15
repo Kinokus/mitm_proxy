@@ -41,6 +41,22 @@ def load_patterns_from_file(filename="allowed_patterns.txt"):
     return patterns
 
 
+def responseheaders(flow: http.HTTPFlow):
+    """
+    This hook runs BEFORE the response body is received.
+    We disable streaming for responses we want to cache.
+    """
+    # Load allowed cache URL patterns
+    allow_cache_url_patterns = load_patterns_from_file()
+    
+    # Check if URL matches our caching patterns
+    if any(pattern.search(flow.request.url) for pattern in allow_cache_url_patterns):
+        # Check for successful status codes
+        if flow.response.status_code in (200, 203, 206, 304):
+            # Disable streaming so content is buffered and available in response hook
+            flow.response.stream = False
+            print(f"[Buffering] {flow.request.url}")
+
 
 def response(flow: http.HTTPFlow):
     # тільки успішні/кешовані типи; за бажанням розширте
@@ -80,15 +96,19 @@ def response(flow: http.HTTPFlow):
     rel = rel.replace("//", "/")
 
     out = Path("cache") / host / rel
+    print(f"Caching to {out}")
     
+
+    print(f"Response content: {flow.response}")
     # Check if response content exists
-    if flow.response.content is None:
+    if flow.response.data.content is None:
+        print(f"No content to cache for {flow.request.url}")
         return
     
     try:
         out.parent.mkdir(parents=True, exist_ok=True)
         # пишемо «сирі» байти
-        out.write_bytes(flow.response.content)
+        out.write_bytes(flow.response.data.content)
 
     except (OSError, FileNotFoundError) as e:
         # Log error but don't crash - path might still be too long
