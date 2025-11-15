@@ -4,6 +4,7 @@ from pathlib import Path
 from urllib.parse import urlsplit, unquote
 import re
 import hashlib
+import os
 
 SAFE = re.compile(r"[^A-Za-z0-9._-]+")
 
@@ -19,17 +20,42 @@ def safe_name(s: str, max_len: int = 80) -> str:
     hash_suffix = hashlib.md5(s.encode()).hexdigest()[:8]
     return safe[:max_len-9] + "_" + hash_suffix
 
+def load_patterns_from_file(filename="allowed_patterns.txt"):
+    patterns = []
+    try:
+        if not os.path.exists(filename):
+            print(f"Pattern file '{filename}' not found, using default patterns.")
+            pattern_lines = [r"\.png$"]
+        else:
+            with open(filename, encoding="utf-8") as f:
+                pattern_lines = [
+                    line.strip()
+                    for line in f
+                    if line.strip() and not line.strip().startswith("#")
+                ]
+        for pat in pattern_lines:
+            patterns.append(re.compile(pat))
+    except Exception as e:
+        print(f"Error loading patterns: {e}")
+        patterns = [ re.compile(r"\.png$") ]
+    return patterns
+
+
+
 def response(flow: http.HTTPFlow):
     # тільки успішні/кешовані типи; за бажанням розширте
-    if flow.response.status_code not in (200, 203, 206):
+    if flow.response.status_code not in (200, 203, 206, 304):
         return
     ct = (flow.response.headers.get("Content-Type") or "").lower()
-    # приклад: кешуємо html, css, js, зображення, шрифти
-    if not any(x in ct for x in (
-        "text/html", "text/css", "javascript", "application/javascript",
-        "image/", "font/", "application/font", "application/octet-stream"
-    )):
+
+    # Load allowed cache URL patterns from a file
+    allow_cache_url_patterns = load_patterns_from_file()
+
+    if not any(pattern.search(flow.request.url) for pattern in allow_cache_url_patterns):
         return
+
+    print(f"Content-Type: {ct}\tURL: {flow.request.url}")
+    
 
     u = urlsplit(flow.request.url)
     host = safe_name(u.hostname or "unknown")
@@ -55,20 +81,15 @@ def response(flow: http.HTTPFlow):
 
     out = Path("cache") / host / rel
     
+    # Check if response content exists
+    if flow.response.content is None:
+        return
+    
     try:
         out.parent.mkdir(parents=True, exist_ok=True)
-
         # пишемо «сирі» байти
         out.write_bytes(flow.response.content)
 
-        # опціонально — метадані (заголовки) поряд
-        meta = out.with_suffix(out.suffix + ".headers.txt")
-        meta.write_text(
-            f"URL: {flow.request.url}\n"
-            f"Status: {flow.response.status_code}\n"
-            + "\n".join(f"{k}: {v}" for k, v in flow.response.headers.items()),
-            encoding="utf-8"
-        )
     except (OSError, FileNotFoundError) as e:
         # Log error but don't crash - path might still be too long
         from mitmproxy import ctx

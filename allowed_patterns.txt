@@ -1,0 +1,29 @@
+# URL Patterns for Caching
+# Lines starting with # are comments
+# Each line is a regex pattern to match URLs
+# If the URL matches ANY pattern, it will be cached
+
+# Examples:
+# Match specific domain
+# ^https://example\.com/
+
+# Match images from yad2
+gw\.yad2
+img\.yad2.*\.jpg$
+img\.yad2.*\.jpeg$
+img\.yad2.*\.png$
+img\.yad2.*\.webp$
+
+# Match specific paths
+# /api/images/
+# /static/
+
+# Match file extensions
+# \.css$
+# \.js$
+# \.woff2?$
+
+# Match CDN content
+# cdn\.example\.com
+# static\.example\.com
+

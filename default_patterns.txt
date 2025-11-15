@@ -1,0 +1,84 @@
+# ============================================
+# DEFAULT URL PATTERNS - Copy to allowed_patterns.txt
+# ============================================
+# This file contains commonly used patterns.
+# Copy the ones you need to allowed_patterns.txt
+
+# ============================================
+# IMAGES BY FILE EXTENSION
+# ============================================
+# All image types from any domain
+# \.(jpg|jpeg|png|gif|webp|svg|bmp|ico)(\?.*)?$
+
+# ============================================
+# YAD2 SPECIFIC (Current Active)
+# ============================================
+gw\.yad2
+img\.yad2.*\.jpg$
+img\.yad2.*\.jpeg$
+img\.yad2.*\.png$
+img\.yad2.*\.webp$
+
+# ============================================
+# COMMON CDN DOMAINS
+# ============================================
+# cdn\.example\.com
+# static\.example\.com
+# assets\.example\.com
+# images\.example\.com
+# img\.example\.com
+
+# ============================================
+# WEB ASSETS
+# ============================================
+# CSS files
+# \.(css|scss)$
+
+# JavaScript files
+# \.(js|mjs)$
+
+# Fonts
+# \.(woff2?|ttf|eot|otf)$
+
+# ============================================
+# API ENDPOINTS
+# ============================================
+# /api/images/
+# /api/static/
+# /api/v\d+/media/
+# /graphql.*images
+
+# ============================================
+# SPECIFIC DOMAINS
+# ============================================
+# ^https://example\.com/
+# ^https://.*\.example\.com/
+# ^https://(www\.)?example\.com/
+
+# ============================================
+# CLOUDINARY / IMAGE SERVICES
+# ============================================
+# res\.cloudinary\.com
+# images\.unsplash\.com
+# i\.imgur\.com
+
+# ============================================
+# SOCIAL MEDIA
+# ============================================
+# pbs\.twimg\.com
+# scontent.*\.fbcdn\.net
+# i\.ytimg\.com
+
+# ============================================
+# E-COMMERCE
+# ============================================
+# product.*images
+# catalog/.*\.(jpg|png)
+# /media/catalog/
+
+# ============================================
+# MATCH ALL (USE WITH CAUTION!)
+# ============================================
+# .*   # WARNING: This caches EVERYTHING!
+
+

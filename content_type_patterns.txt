@@ -1,0 +1,43 @@
+# Content-Type Patterns for Caching
+# Lines starting with # are comments
+# Each line is a substring to match in Content-Type headers
+# Uncomment the types you want to cache
+
+# Web content
+# text/html
+# text/css
+# javascript
+# application/javascript
+
+# Images
+image/
+# image/jpeg
+# image/png
+# image/webp
+# image/gif
+
+# Fonts
+# font/
+# application/font
+# application/x-font
+
+# Data formats
+application/json
+# application/xml
+# text/xml
+
+# Binary files
+# application/octet-stream
+# application/pdf
+# application/zip
+
+# Media
+# video/
+# audio/
+
+# Documents
+# application/msword
+# application/vnd.ms-excel
+# application/vnd.openxmlformats
+
+
